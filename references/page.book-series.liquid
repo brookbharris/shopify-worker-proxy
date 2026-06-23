@@ -1,0 +1,105 @@
+{% comment %}
+  page.book-series.liquid
+  Shopify theme template for a series hub page.
+  
+  Usage:
+  - Copy this file to your theme: templates/page.book-series.liquid
+  - Any Shopify page created with template_suffix "book-series" will use this layout.
+  - The Worker sets this suffix automatically when creating pages via /shopify/pages/sync.
+  
+  Customization:
+  - Replace font, color, and layout variables with your brand values.
+  - The page body_html is rendered as-is — your app controls the HTML structure.
+  - Add product metafield lookups or collection queries if you want dynamic product cards.
+{% endcomment %}
+
+{{ 'section-series-hub.css' | asset_url | stylesheet_tag }}
+
+<div class="series-hub page-width">
+
+  <header class="series-hub__header">
+    <h1 class="series-hub__title">{{ page.title }}</h1>
+    {% if page.metafields.custom.subtitle != blank %}
+      <p class="series-hub__subtitle">{{ page.metafields.custom.subtitle }}</p>
+    {% endif %}
+  </header>
+
+  <div class="series-hub__body rte">
+    {{ page.content }}
+  </div>
+
+  {% comment %}
+    Optional: dynamically pull in products tagged to this series.
+    Replace "series-slug" with a tag that matches this series.
+    
+    {% assign series_tag = page.handle %}
+    {% assign series_products = collections.all.products | where: 'tags', series_tag %}
+    {% if series_products.size > 0 %}
+      <div class="series-hub__products">
+        <h2>Available in This Series</h2>
+        <ul class="series-hub__product-grid">
+          {% for product in series_products %}
+            <li class="series-hub__product-card">
+              <a href="{{ product.url }}">
+                {% if product.featured_image %}
+                  {{ product.featured_image | image_url: width: 300 | image_tag }}
+                {% endif %}
+                <h3>{{ product.title }}</h3>
+                <span class="price">{{ product.price | money }}</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  {% endcomment %}
+
+</div>
+
+<style>
+  .series-hub {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+  .series-hub__header {
+    margin-bottom: 32px;
+    border-bottom: 2px solid currentColor;
+    padding-bottom: 20px;
+  }
+  .series-hub__title {
+    font-size: 2.4rem;
+    margin: 0 0 8px;
+  }
+  .series-hub__subtitle {
+    font-size: 1.1rem;
+    opacity: 0.7;
+    margin: 0;
+  }
+  .series-hub__body h1 { font-size: 2rem; margin-top: 2em; }
+  .series-hub__body h2 { font-size: 1.5rem; margin-top: 1.6em; }
+  .series-hub__body h3 { font-size: 1.2rem; margin-top: 1.4em; }
+  .series-hub__body hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  .series-hub__body a { text-decoration: underline; }
+  .series-hub__product-grid {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .series-hub__product-card a {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .series-hub__product-card img {
+    width: 100%;
+    border-radius: 6px;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+  }
+</style>
